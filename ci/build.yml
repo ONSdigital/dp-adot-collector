@@ -1,0 +1,19 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: golang
+    tag: 1.16.3
+
+inputs:
+  - name: dp-otel-collector
+  - name: build-file
+  - name: dp-ci
+
+outputs:
+  - name: build
+
+run:
+  path: dp-otel-collector/ci/scripts/build.sh

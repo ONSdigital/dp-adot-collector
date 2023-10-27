@@ -3,8 +3,8 @@ cwd=$(pwd)
 
 ls -la
 
-cp build-file/dp-otel-collector dp-otel-collector/otel-collector
-cp key-file/ftb.tar.gz.asc dp-otel-collector
+cp build-file/dp-adot-collector dp-adot-collector/adot-collector
+cp key-file/ftb.tar.gz.asc dp-adot-collector
 
 pushd dp-ci/gpg-keys/ci
   echo "decrypting CI privkey"
@@ -13,11 +13,11 @@ pushd dp-ci/gpg-keys/ci
 popd
 
 
-pushd dp-otel-collector
-    chmod 755 otel-collector
+pushd dp-adot-collector
+    chmod 755 adot-collector
     gpg -d ftb.tar.gz.asc > ftb.tar.gz
 
     tar -xvf ftb.tar.gz
 popd
 
-cp -r dp-otel-collector/* build
+cp -r dp-adot-collector/* build

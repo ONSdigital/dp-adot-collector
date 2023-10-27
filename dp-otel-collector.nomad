@@ -1,4 +1,4 @@
-job "dp-otel-collector" {
+job "dp-adot-collector" {
   datacenters = ["eu-west-2"]
   region      = "eu"
   type        = "service"
@@ -18,23 +18,23 @@ job "dp-otel-collector" {
       mode     = "delay"
     }
 
-    task "dp-otel-collector" {
+    task "dp-adot-collector" {
       driver = "docker"
 
       artifact {
-        source = "s3::https://s3-eu-west-2.amazonaws.com/{{DEPLOYMENT_BUCKET}}/dp-otel-collector/{{REVISION}}.tar.gz"
+        source = "s3::https://s3-eu-west-2.amazonaws.com/{{DEPLOYMENT_BUCKET}}/dp-adot-collector/{{REVISION}}.tar.gz"
       }
 
       config {
         command = "${NOMAD_TASK_DIR}/start-task"
 
-        args = ["./dp-otel-collector"]
+        args = ["./dp-adot-collector"]
 
         image = "{{ECR_URL}}:concourse-{{REVISION}}"
       }
 
       service {
-        name = "dp-otel-collector"
+        name = "dp-adot-collector"
         port = "http"
         tags = ["management"]
         check {

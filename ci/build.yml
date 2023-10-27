@@ -8,7 +8,7 @@ image_resource:
     tag: 1.16.3
 
 inputs:
-  - name: dp-otel-collector
+  - name: dp-adot-collector
   - name: build-file
   - name: dp-ci
 
@@ -16,4 +16,4 @@ outputs:
   - name: build
 
 run:
-  path: dp-otel-collector/ci/scripts/build.sh
+  path: dp-adot-collector/ci/scripts/build.sh

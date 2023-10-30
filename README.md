@@ -1,2 +1,2 @@
 # dp-adot-collector
-Opentelemetry container used for observability of applications
+Opentelemetry container used for observability of applications test

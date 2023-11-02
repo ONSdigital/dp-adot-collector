@@ -1,0 +1,19 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: golang
+    tag: 1.21.3-bullseye
+
+inputs:
+  - name: dp-adot-collector
+  - name: build-file
+  - name: dp-ci
+
+outputs:
+  - name: build
+
+run:
+  path: dp-adot-collector/ci/scripts/build.sh

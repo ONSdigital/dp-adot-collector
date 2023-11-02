@@ -57,18 +57,6 @@ job "dp-adot-collector" {
       template {
         source      = "${NOMAD_TASK_DIR}/vars-template"
         destination = "${NOMAD_TASK_DIR}/vars"
-        data = <<EOH
-        # Configs based on nomad networking
-        export BIND_ADDR=":{{ env "NOMAD_PORT_http" }}"
-        export MAPS_API_URL="http://{{ env "NOMAD_IP_http" }}:12850/"
-
-        # Secret configs read from vault
-        {{ with (secret (print "secret/" (env "NOMAD_TASK_NAME"))) }}
-        {{ range $key, $value := .Data }}
-        export {{ $key }}="{{ $value }}"
-        {{ end }}
-        {{ end }}
-        EOH
 
         destination = "secrets/app.env"
         env         = true

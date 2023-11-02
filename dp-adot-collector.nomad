@@ -57,12 +57,7 @@ job "dp-adot-collector" {
       template {
         source      = "${NOMAD_TASK_DIR}/vars-template"
         destination = "${NOMAD_TASK_DIR}/vars"
-
-        destination = "secrets/app.env"
-        env         = true
-        splay       = "1m"
-        change_mode = "restart"
-      }
+      
       }
 
       vault {

@@ -9,7 +9,6 @@ image_resource:
 
 inputs:
   - name: dp-adot-collector
-  - name: build-file
   - name: dp-ci
 
 outputs:

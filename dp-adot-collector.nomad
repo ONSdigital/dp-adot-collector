@@ -59,6 +59,10 @@ job "dp-adot-collector" {
         destination = "${NOMAD_TASK_DIR}/vars"
       }
 
+      vault {
+        policies = ["dp-adot-collector"]
+      }
+
     }
   }
 }

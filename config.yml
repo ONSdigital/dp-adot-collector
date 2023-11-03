@@ -1,5 +1,6 @@
 extensions:
   health_check:
+    endpoint: "localhost:13133"
   pprof:
     endpoint: 0.0.0.0:1777
 
@@ -7,7 +8,7 @@ receivers:
   otlp:
     protocols:
       grpc:
-        endpoint: 0.0.0.0:12850
+        endpoint: 0.0.0.0:4317
 
 processors:
   batch:
@@ -16,9 +17,11 @@ exporters:
   logging:
     loglevel: debug
   awsxray:
-    region: 'eu-west-2'
+    region: "eu-west-2"
   awsemf:
-    region: 'eu-west-2'
+    region: "eu-west-2"
+  prometheus:
+    endpoint: "0.0.0.0:8889"
 
 service:
   pipelines:
@@ -27,9 +30,9 @@ service:
       exporters: [awsxray]
     metrics:
       receivers: [otlp]
-      exporters: [awsemf]
+      exporters: [prometheus, awsemf]
 
-  extensions: [pprof]
+  extensions: [health_check, pprof]
   telemetry:
     logs:
       level: debug

@@ -4,4 +4,4 @@ pushd dp-adot-collector
   cp Dockerfile.concourse ../build
 popd
 
-cp config.yml build
+cp config.yml ../build

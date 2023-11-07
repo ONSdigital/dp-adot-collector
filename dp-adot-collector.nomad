@@ -3,13 +3,13 @@ job "dp-adot-collector" {
   region      = "eu"
   type        = "service"
 
-  constraint {
-    attribute = "${node.class}"
-    value     = "management"
-  }
-
   group "management" {
-    count = "1"
+    count = "{{MANAGEMENT_TASK_COUNT}}"
+
+    constraint {
+      attribute = "${node.class}"
+      value     = "management"
+    }
 
     restart {
       attempts = 3
@@ -21,48 +21,264 @@ job "dp-adot-collector" {
     task "dp-adot-collector" {
       driver = "docker"
 
-      artifact {
-        source = "s3::https://s3-eu-west-2.amazonaws.com/{{DEPLOYMENT_BUCKET}}/dp-adot-collector/{{REVISION}}.tar.gz"
-      }
-
       config {
-        command = "${NOMAD_TASK_DIR}/start-task"
-
-        args = ["./dp-adot-collector"]
-
         image = "{{ECR_URL}}:concourse-{{REVISION}}"
+        ports = ["grpc","health","prometheus"]
       }
 
       service {
-        name = "dp-adot-collector"
-        port = "http"
-        tags = ["management"]
+        name = "dp-adot-collector-grpc"
+        port = "grpc"
+        tags = ["management","otel-collector"]
+
         check {
           type     = "http"
+          port     = "health"
           path     = "/health"
           interval = "10s"
           timeout  = "2s"
         }
       }
 
+      service {
+        name = "dp-adot-collector-prometheus"
+        port = "prometheus"
+        tags = ["management","otel-collector"]
+
+        check {
+          type     = "http"
+          port     = "health"
+          path     = "/metrics"
+          interval = "1m"
+          timeout  = "2s"
+        }
+      }
+
       resources {
-        cpu    = "500"
-        memory = "512"
+        cpu    = "{{MANAGEMENT_RESOURCE_CPU}}"
+        memory = "{{MANAGEMENT_RESOURCE_MEM}}"
 
         network {
-          port "http" {}
+          port "grpc" {
+            to = 4317
+          }
+          port "prometheus" {
+            to = 8889
+          }
+          port "health" {
+            to = 13133
+          }
         }
       }
 
       template {
-        source      = "${NOMAD_TASK_DIR}/vars-template"
-        destination = "${NOMAD_TASK_DIR}/vars"
-      
+        data = <<EOH
+        # Configs based on environment (e.g. export BIND_ADDR=":{{ env "NOMAD_PORT_http" }}")
+        # or static (e.g. export BIND_ADDR=":8080")
+
+        # Secret configs read from vault
+        {{ with (secret (print "secret/" (env "NOMAD_TASK_NAME"))) }}
+        {{ range $key, $value := .Data }}
+        export {{ $key }}="{{ $value }}"
+        {{ end }}
+        {{ end }}
+        EOH
+
+        destination = "secrets/app.env"
+        env         = true
+        splay       = "1m"
+        change_mode = "restart"
       }
 
       vault {
         policies = ["dp-adot-collector"]
       }
-
     }
   }
+
+  group "web" {
+    count = "{{WEB_TASK_COUNT}}"
+
+    constraint {
+      attribute = "${node.class}"
+      value     = "web"
+    }
+
+    restart {
+      attempts = 3
+      delay    = "15s"
+      interval = "1m"
+      mode     = "delay"
+    }
+
+    task "dp-adot-collector" {
+      driver = "docker"
+
+      config {
+        image = "{{ECR_URL}}:concourse-{{REVISION}}"
+        ports = ["grpc","health","prometheus"]
+      }
+
+      service {
+        name = "dp-adot-collector-grpc"
+        port = "grpc"
+        tags = ["web","otel-collector"]
+
+        check {
+          type     = "http"
+          port     = "health"
+          path     = "/health"
+          interval = "10s"
+          timeout  = "2s"
+        }
+      }
+
+      service {
+        name = "dp-adot-collector-prometheus"
+        port = "prometheus"
+        tags = ["web","otel-collector"]
+
+        check {
+          type     = "http"
+          port     = "health"
+          path     = "/metrics"
+          interval = "1m"
+          timeout  = "2s"
+        }
+      }
+
+      resources {
+        cpu    = "{{WEB_RESOURCE_CPU}}"
+        memory = "{{WEB_RESOURCE_MEM}}"
+
+        network {
+          port "grpc" {
+            to = 4317
+          }
+          port "prometheus" {
+            to = 8889
+          }
+          port "health" {
+            to = 13133
+          }
+        }
+      }
+
+      template {
+        data = <<EOH
+        # Configs based on environment (e.g. export BIND_ADDR=":{{ env "NOMAD_PORT_http" }}")
+        # or static (e.g. export BIND_ADDR=":8080")
+
+        # Secret configs read from vault
+        {{ with (secret (print "secret/" (env "NOMAD_TASK_NAME"))) }}
+        {{ range $key, $value := .Data }}
+        export {{ $key }}="{{ $value }}"
+        {{ end }}
+        {{ end }}
+        EOH
+
+        destination = "secrets/app.env"
+        env         = true
+        splay       = "1m"
+        change_mode = "restart"
+      }
+
+      vault {
+        policies = ["dp-adot-collector"]
+      }
+    }
+  }
+
+  group "publishing" {
+    count = "{{PUBLISHING_TASK_COUNT}}"
+
+    constraint {
+      attribute = "${node.class}"
+      value     = "publishing"
+    }
+
+    restart {
+      attempts = 3
+      delay    = "15s"
+      interval = "1m"
+      mode     = "delay"
+    }
+
+    task "dp-adot-collector" {
+      driver = "docker"
+
+      config {
+        image = "{{ECR_URL}}:concourse-{{REVISION}}"
+        ports = ["grpc","health","prometheus"]
+      }
+
+      service {
+        name = "dp-adot-collector-grpc"
+        port = "grpc"
+        tags = ["publishing","otel-collector"]
+
+        check {
+          type     = "http"
+          port     = "health"
+          path     = "/health"
+          interval = "10s"
+          timeout  = "2s"
+        }
+      }
+
+      service {
+        name = "dp-adot-collector-prometheus"
+        port = "prometheus"
+        tags = ["publishing","otel-collector"]
+
+        check {
+          type     = "http"
+          port     = "health"
+          path     = "/metrics"
+          interval = "1m"
+          timeout  = "2s"
+        }
+      }
+
+      resources {
+        cpu    = "{{PUBLISHING_RESOURCE_CPU}}"
+        memory = "{{PUBLISHING_RESOURCE_MEM}}"
+
+        network {
+          port "grpc" {
+            to = 4317
+          }
+          port "prometheus" {
+            to = 8889
+          }
+          port "health" {
+            to = 13133
+          }
+        }
+      }
+
+      template {
+        data = <<EOH
+        # Configs based on environment (e.g. export BIND_ADDR=":{{ env "NOMAD_PORT_http" }}")
+        # or static (e.g. export BIND_ADDR=":8080")
+
+        # Secret configs read from vault
+        {{ with (secret (print "secret/" (env "NOMAD_TASK_NAME"))) }}
+        {{ range $key, $value := .Data }}
+        export {{ $key }}="{{ $value }}"
+        {{ end }}
+        {{ end }}
+        EOH
+
+        destination = "secrets/app.env"
+        env         = true
+        splay       = "1m"
+        change_mode = "restart"
+      }
+
+      vault {
+        policies = ["dp-adot-collector"]
+      }
+    }
+  }
+}

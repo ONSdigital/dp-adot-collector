@@ -1,3 +1,6 @@
 FROM public.ecr.aws/aws-observability/aws-otel-collector:v0.34.0
 COPY config.yml /etc/otel-agent-config.yaml
+
+ADD config.yml ./etc/otel-agent-config.yaml
+
 CMD ["--config=/etc/otel-agent-config.yaml"]

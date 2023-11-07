@@ -18,18 +18,6 @@ job "dp-adot-collector" {
       mode     = "delay"
     }
 
-    network {
-      port "grpc" {
-        to = 4317
-      }
-      port "prometheus" {
-        to = 8889
-      }
-      port "health" {
-        to = 13133
-      }
-    }
-
     task "dp-adot-collector" {
       driver = "docker"
 
@@ -69,6 +57,18 @@ job "dp-adot-collector" {
       resources {
         cpu    = "{{MANAGEMENT_RESOURCE_CPU}}"
         memory = "{{MANAGEMENT_RESOURCE_MEM}}"
+
+        network {
+          port "grpc" {
+            to = 4317
+          }
+          port "prometheus" {
+            to = 8889
+          }
+          port "health" {
+            to = 13133
+          }
+        }
       }
 
       template {
@@ -111,18 +111,6 @@ job "dp-adot-collector" {
       mode     = "delay"
     }
 
-    network {
-      port "grpc" {
-        to = 4317
-      }
-      port "prometheus" {
-        to = 8889
-      }
-      port "health" {
-        to = 13133
-      }
-    }
-
     task "dp-adot-collector" {
       driver = "docker"
 
@@ -162,6 +150,18 @@ job "dp-adot-collector" {
       resources {
         cpu    = "{{WEB_RESOURCE_CPU}}"
         memory = "{{WEB_RESOURCE_MEM}}"
+
+        network {
+          port "grpc" {
+            to = 4317
+          }
+          port "prometheus" {
+            to = 8889
+          }
+          port "health" {
+            to = 13133
+          }
+        }
       }
 
       template {
@@ -204,18 +204,6 @@ job "dp-adot-collector" {
       mode     = "delay"
     }
 
-    network {
-      port "grpc" {
-        to = 4317
-      }
-      port "prometheus" {
-        to = 8889
-      }
-      port "health" {
-        to = 13133
-      }
-    }
-
     task "dp-adot-collector" {
       driver = "docker"
 
@@ -255,6 +243,18 @@ job "dp-adot-collector" {
       resources {
         cpu    = "{{PUBLISHING_RESOURCE_CPU}}"
         memory = "{{PUBLISHING_RESOURCE_MEM}}"
+
+        network {
+          port "grpc" {
+            to = 4317
+          }
+          port "prometheus" {
+            to = 8889
+          }
+          port "health" {
+            to = 13133
+          }
+        }
       }
 
       template {

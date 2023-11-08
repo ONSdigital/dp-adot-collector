@@ -18,6 +18,45 @@ job "dp-adot-collector" {
       mode     = "delay"
     }
 
+    network {
+      port "grpc" {
+        to = 4317
+      }
+      port "prometheus" {
+        to = 8889
+      }
+      port "health" {
+        to = 13133
+      }
+    }
+
+    service {
+      name = "dp-adot-collector-grpc"
+      port = "grpc"
+      tags = ["management","otel-collector"]
+
+      check {
+        type     = "http"
+        port     = "health"
+        path     = "/health"
+        interval = "10s"
+        timeout  = "2s"
+      }
+    }
+
+    service {
+      name = "dp-adot-collector-prometheus"
+      port = "prometheus"
+      tags = ["management","otel-collector"]
+
+      check {
+        type     = "http"
+        path     = "/metrics"
+        interval = "1m"
+        timeout  = "2s"
+      }
+    }
+
     task "dp-adot-collector" {
       driver = "docker"
 
@@ -26,49 +65,9 @@ job "dp-adot-collector" {
         ports = ["grpc","health","prometheus"]
       }
 
-      service {
-        name = "dp-adot-collector-grpc"
-        port = "grpc"
-        tags = ["management","otel-collector"]
-
-        check {
-          type     = "http"
-          port     = "health"
-          path     = "/health"
-          interval = "10s"
-          timeout  = "2s"
-        }
-      }
-
-      service {
-        name = "dp-adot-collector-prometheus"
-        port = "prometheus"
-        tags = ["management","otel-collector"]
-
-        check {
-          type     = "http"
-          port     = "health"
-          path     = "/metrics"
-          interval = "1m"
-          timeout  = "2s"
-        }
-      }
-
       resources {
         cpu    = "{{MANAGEMENT_RESOURCE_CPU}}"
         memory = "{{MANAGEMENT_RESOURCE_MEM}}"
-
-        network {
-          port "grpc" {
-            to = 4317
-          }
-          port "prometheus" {
-            to = 8889
-          }
-          port "health" {
-            to = 13133
-          }
-        }
       }
 
       template {
@@ -111,6 +110,45 @@ job "dp-adot-collector" {
       mode     = "delay"
     }
 
+    network {
+      port "grpc" {
+        to = 4317
+      }
+      port "prometheus" {
+        to = 8889
+      }
+      port "health" {
+        to = 13133
+      }
+    }
+
+    service {
+      name = "dp-adot-collector-grpc"
+      port = "grpc"
+      tags = ["web","otel-collector"]
+
+      check {
+        type     = "http"
+        port     = "health"
+        path     = "/health"
+        interval = "10s"
+        timeout  = "2s"
+      }
+    }
+
+    service {
+      name = "dp-adot-collector-prometheus"
+      port = "prometheus"
+      tags = ["web","otel-collector"]
+
+      check {
+        type     = "http"
+        path     = "/metrics"
+        interval = "1m"
+        timeout  = "2s"
+      }
+    }
+
     task "dp-adot-collector" {
       driver = "docker"
 
@@ -119,49 +157,9 @@ job "dp-adot-collector" {
         ports = ["grpc","health","prometheus"]
       }
 
-      service {
-        name = "dp-adot-collector-grpc"
-        port = "grpc"
-        tags = ["web","otel-collector"]
-
-        check {
-          type     = "http"
-          port     = "health"
-          path     = "/health"
-          interval = "10s"
-          timeout  = "2s"
-        }
-      }
-
-      service {
-        name = "dp-adot-collector-prometheus"
-        port = "prometheus"
-        tags = ["web","otel-collector"]
-
-        check {
-          type     = "http"
-          port     = "health"
-          path     = "/metrics"
-          interval = "1m"
-          timeout  = "2s"
-        }
-      }
-
       resources {
         cpu    = "{{WEB_RESOURCE_CPU}}"
         memory = "{{WEB_RESOURCE_MEM}}"
-
-        network {
-          port "grpc" {
-            to = 4317
-          }
-          port "prometheus" {
-            to = 8889
-          }
-          port "health" {
-            to = 13133
-          }
-        }
       }
 
       template {
@@ -204,6 +202,45 @@ job "dp-adot-collector" {
       mode     = "delay"
     }
 
+    network {
+      port "grpc" {
+        to = 4317
+      }
+      port "prometheus" {
+        to = 8889
+      }
+      port "health" {
+        to = 13133
+      }
+    }
+
+    service {
+      name = "dp-adot-collector-grpc"
+      port = "grpc"
+      tags = ["publishing","otel-collector"]
+
+      check {
+        type     = "http"
+        port     = "health"
+        path     = "/health"
+        interval = "10s"
+        timeout  = "2s"
+      }
+    }
+
+    service {
+      name = "dp-adot-collector-prometheus"
+      port = "prometheus"
+      tags = ["publishing","otel-collector"]
+
+      check {
+        type     = "http"
+        path     = "/metrics"
+        interval = "1m"
+        timeout  = "2s"
+      }
+    }
+
     task "dp-adot-collector" {
       driver = "docker"
 
@@ -212,49 +249,9 @@ job "dp-adot-collector" {
         ports = ["grpc","health","prometheus"]
       }
 
-      service {
-        name = "dp-adot-collector-grpc"
-        port = "grpc"
-        tags = ["publishing","otel-collector"]
-
-        check {
-          type     = "http"
-          port     = "health"
-          path     = "/health"
-          interval = "10s"
-          timeout  = "2s"
-        }
-      }
-
-      service {
-        name = "dp-adot-collector-prometheus"
-        port = "prometheus"
-        tags = ["publishing","otel-collector"]
-
-        check {
-          type     = "http"
-          port     = "health"
-          path     = "/metrics"
-          interval = "1m"
-          timeout  = "2s"
-        }
-      }
-
       resources {
         cpu    = "{{PUBLISHING_RESOURCE_CPU}}"
         memory = "{{PUBLISHING_RESOURCE_MEM}}"
-
-        network {
-          port "grpc" {
-            to = 4317
-          }
-          port "prometheus" {
-            to = 8889
-          }
-          port "health" {
-            to = 13133
-          }
-        }
       }
 
       template {

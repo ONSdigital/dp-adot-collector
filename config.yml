@@ -20,6 +20,10 @@ exporters:
     region: "eu-west-2"
   awsemf:
     region: "eu-west-2"
+  otlp:
+    endpoint: "jaeger.service.local:4317"
+    tls:
+      insecure: true
   prometheus:
     endpoint: "0.0.0.0:8889"
 
@@ -27,10 +31,10 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      exporters: [awsxray]
+      exporters: [awsxray, otlp, logging]
     metrics:
       receivers: [otlp]
-      exporters: [prometheus, awsemf]
+      exporters: [prometheus, logging, awsemf]
 
   extensions: [health_check, pprof]
   telemetry:

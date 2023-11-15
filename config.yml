@@ -41,7 +41,6 @@ service:
     metrics:
       receivers: [otlp]
       exporters: [prometheus, logging, awsemf]
-      processors: [tail_sampling]
 
   extensions: [health_check, pprof]
   telemetry:

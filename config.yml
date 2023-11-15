@@ -11,7 +11,16 @@ receivers:
         endpoint: 0.0.0.0:4317
 
 processors:
-  batch:
+  tail_sampling:
+    policies:
+      - name: errors-policy
+        type: status_code
+        status_code: 
+          status_codes: [ ERROR ]
+      - name: test-policy
+        type: probabilistic
+        probabilistic:
+          sampling_percentage: 10
 
 exporters:
   logging:
@@ -27,10 +36,12 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      exporters: [awsxray]
+      exporters: [awsxray, logging]
+      processors: [tail_sampling]
     metrics:
       receivers: [otlp]
-      exporters: [prometheus, awsemf]
+      exporters: [prometheus, logging, awsemf]
+      processors: [tail_sampling]
 
   extensions: [health_check, pprof]
   telemetry:

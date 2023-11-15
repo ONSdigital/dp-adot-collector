@@ -11,7 +11,16 @@ receivers:
         endpoint: 0.0.0.0:4317
 
 processors:
-  batch:
+  tail_sampling:
+    policies:
+      - name: errors-policy
+        type: status_code
+        status_code: 
+          status_codes: [ ERROR ]
+      - name: test-policy
+        type: probabilistic
+        probabilistic:
+          sampling_percentage: 10
 
 exporters:
   logging:
@@ -20,10 +29,6 @@ exporters:
     region: "eu-west-2"
   awsemf:
     region: "eu-west-2"
-  otlp:
-    endpoint: "jaeger.service.local:4317"
-    tls:
-      insecure: true
   prometheus:
     endpoint: "0.0.0.0:8889"
 
@@ -31,10 +36,12 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      exporters: [awsxray, otlp, logging]
+      exporters: [awsxray, logging]
+      processessors: [tail_sampling]
     metrics:
       receivers: [otlp]
       exporters: [prometheus, logging, awsemf]
+      processessors: [tail_sampling]
 
   extensions: [health_check, pprof]
   telemetry:

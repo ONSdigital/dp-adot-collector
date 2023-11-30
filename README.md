@@ -42,9 +42,9 @@ As well as this repository, the repositories stated below also need to be cloned
 * session-manager-plugin
 * bash - Mac comes with an older version but a new version of bash is required for things such as encryption/decryption
 * colordiff
-* Terraform version 0.14.10
+* [Terraform version 0.14.10](https://github.com/ONSdigital/dp-setup/blob/awsb/terraform/README.md#prerequisites)
 
-# GPG Keys and environmnet keys
+### GPG Keys and environmnet keys
 Environment keys are needed to decrypt/encrypt files. A senior ONS staff member will provide you with a passphrase file for each of the environment keys. Decrypt and extract this file to get the passphrase. 
 The public and private keys for each environment can be found in the [dp-ci repo](https://github.com/ONSdigital/dp-ci/tree/main/gpg-keys)
 
@@ -61,7 +61,7 @@ The prod key is in prod directory, not production.
 
 You would also need the concourse key to run pipelines which is in the ci directory: https://github.com/ONSdigital/dp-ci/tree/main/gpg-keys/ci 
 
-## AWS Setup
+### AWS Setup
 * Install [dp-cli](https://github.com/ONSdigital/dp-cli)
 
 * Uncomment all the AWS accounts you have access to on ~/.dp-cli-config.yml
@@ -84,7 +84,7 @@ aws sso login --profile $AWS_PROFILE
 ```
 
 
-## Nomad
+### Nomad
 1. [Sandbox URL](https://nomad.dp.aws.onsdigital.uk/)
 2. [Staging URL](https://nomad.dp-staging.aws.onsdigital.uk/)
 3. [Prod URL](https://nomad.dp-prod.aws.onsdigital.uk/)
@@ -103,16 +103,16 @@ The acl token is shown with % at the end, this is not part of the token. You can
 Run `dp remote allow sandbox` after you have exported the environment as stated in AWS Setup.  
 More info: https://github.com/ONSdigital/dp-setup/blob/main/scripts/README.md#decrypt_inline_vault 
 
-### Rolling deploy 
+#### Rolling deploy 
 
 On the Nomad UI, in dp-adot-collector job, click on the definition, edit, find the CPU count and increment it by 1 for web, publishing and management. Plan and Run to complete the rolling deploy. 
 
-## Pipeline
+### Pipeline
 The concourse pipeline is set up in dp-ci and this application uses [docker-deploy.yml](https://github.com/ONSdigital/dp-ci/blob/main/pipelines/pipeline-generator/pipelines/docker-deploy.yml) pipeline to deploy the collector to sandbox, staging and prod (manually triggered). 
 
 Ensure ansible is provisioned for Digital Publishing using [this guide](https://github.com/ONSdigital/dp-setup/blob/awsb/ansible/README.md#prerequisites)
 The pipeline will be triggered to deploy to sandbox when merged to develop branch on this repository. Master branch will deploy to staging and prod (manually triggered). 
-If any changes related to the collector are added on any other repository, the pipeline would need to be destroyed and recreated using the fly cli tool to pick up the latest changes, it does not update without recreating. 
+If any changes related to the collector are added on any other repository, the pipeline would need to be destroyed and recreated using the [fly cli tool](https://github.com/ONSdigital/dp-ci/blob/main/pipelines/README.md#bootstrapping-the-pipelines) to pick up the latest changes, it does not update without recreating. 
 
 ```
 PIPELINE=dp-adot-collector make destroy
@@ -120,6 +120,7 @@ PIPELINE=dp-adot-collector make set
 ```
 
 If there are any changes in the [secrets](https://github.com/ONSdigital/dp-configs/tree/main/secrets), it would need a rolling deploy on nomad even if the pipeline has been destroyed and recreated. 
+
 
 ### Terraform and nginx routing
 These are found in dp-setup repository. The routing for opentelemetry is added to the [management](https://github.com/ONSdigital/dp-setup/blob/awsb/ansible/templates/consul-template/management-nginx.http.conf.tpl.j2), [web](https://github.com/ONSdigital/dp-setup/blob/awsb/ansible/templates/consul-template/web-nginx.http.conf.tpl.j2) and [publishing](https://github.com/ONSdigital/dp-setup/blob/awsb/ansible/templates/consul-template/publishing-nginx.http.conf.tpl.j2) routing template. 
@@ -153,7 +154,10 @@ You would need to run this command before the above everytime you require the cr
 These credentials are added to the [secrets](https://github.com/ONSdigital/dp-configs/tree/main/secrets) so that the collector is able to use that policy and write to xray. 
 
 ### Secrets and manifests
-These are in the dp-configs repo. The secrets contain the AWS credentials for the adot-collector user for each environment. Before the secrets are added, you would need to allow the app access to the secrets, check that the vault policy contains the adot-collector - https://github.com/ONSdigital/dp-setup/blob/awsb/ansible/files/vault-policies/dp-adot-collector.hcl and the adot-collector is added to https://github.com/ONSdigital/dp-setup/blob/awsb/ansible/files/vault-policies/dp-deployer.hcl. 
+These are in the dp-configs repo. 
+
+#### Secrets
+The secrets contain the AWS credentials for the adot-collector user for each environment. Before the secrets are added, you would need to allow the app access to the secrets, check that the vault policy contains the adot-collector - https://github.com/ONSdigital/dp-setup/blob/awsb/ansible/files/vault-policies/dp-adot-collector.hcl and the adot-collector is added to https://github.com/ONSdigital/dp-setup/blob/awsb/ansible/files/vault-policies/dp-deployer.hcl. 
 
 To decrypt and encrypt the [secrets](https://github.com/ONSdigital/dp-configs/blob/main/secrets/sandbox/dp-adot-collector.json.asc)
 ```
@@ -168,6 +172,8 @@ More info found [here](https://github.com/ONSdigital/dp-configs/tree/main/secret
 #### Manifests
 The [adot-collector manifests file](https://github.com/ONSdigital/dp-configs/blob/main/manifests/dp-adot-collector.yml) defines the number of instances in each subnet and the instance configuration. Currently there is 1 instance in each subnet for every environmnet. 
 
+## Release process
+When the collector is working on sandbox, to release to staging, a release process is required following this [guide](https://github.com/ONSdigital/dp/blob/efd7070bbdb9c817d8ce9ee5fe9fcfd86390e628/guides/RELEASES.md#ready-for-release-column). Once that is merged to master, it will trigger the adot-collector concourse pipeline to deploy to staging. 
+
 ## Important points
 * Do not merge using the github UI, use the commandline instead. Instructions can be found next to merge button on the UI
-

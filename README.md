@@ -105,7 +105,7 @@ More info: https://github.com/ONSdigital/dp-setup/blob/main/scripts/README.md#de
 
 #### Rolling deploy 
 
-On the Nomad UI, in dp-adot-collector job, click on the definition, edit, find the CPU count and increment it by 1 for web, publishing and management. Plan and Run to complete the rolling deploy. 
+On the Nomad UI, in dp-adot-collector job, click on the definition, edit, find the CPU count and increment it by 1 for web & publishing. Plan and Run to complete the rolling deploy. 
 
 ### Pipeline
 The concourse pipeline is set up in dp-ci and this application uses [docker-deploy.yml](https://github.com/ONSdigital/dp-ci/blob/main/pipelines/pipeline-generator/pipelines/docker-deploy.yml) pipeline to deploy the collector to sandbox, staging and prod (manually triggered). 
@@ -123,7 +123,7 @@ If there are any changes in the [secrets](https://github.com/ONSdigital/dp-confi
 
 
 ### Terraform and nginx routing
-These are found in dp-setup repository. The routing for opentelemetry is added to the [management](https://github.com/ONSdigital/dp-setup/blob/awsb/ansible/templates/consul-template/management-nginx.http.conf.tpl.j2), [web](https://github.com/ONSdigital/dp-setup/blob/awsb/ansible/templates/consul-template/web-nginx.http.conf.tpl.j2) and [publishing](https://github.com/ONSdigital/dp-setup/blob/awsb/ansible/templates/consul-template/publishing-nginx.http.conf.tpl.j2) routing template. 
+These are found in dp-setup repository. The routing for opentelemetry is added to the [web](https://github.com/ONSdigital/dp-setup/blob/awsb/ansible/templates/consul-template/web-nginx.http.conf.tpl.j2) and [publishing](https://github.com/ONSdigital/dp-setup/blob/awsb/ansible/templates/consul-template/publishing-nginx.http.conf.tpl.j2) routing template. 
 
 This takes this format
 ```

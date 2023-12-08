@@ -26,6 +26,7 @@ processors:
     traces:
       span:
         - 'attributes["http.user_agent"] == "Consul Health Check"'
+        - 'attributes["user_agent.original"] == "Consul Health Check"'
   memory_limiter:
     check_interval: 1s
     limit_percentage: 80

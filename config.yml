@@ -21,6 +21,15 @@ processors:
         type: probabilistic
         probabilistic:
           sampling_percentage: 10
+  filter/excludeHealthCheck:
+    error_mode: ignore
+    traces:
+      span:
+        - 'attributes["http.user_agent"] == "Consul Health Check"'
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 80
+    spike_limit_percentage: 20
 
 exporters:
   logging:
@@ -37,12 +46,13 @@ service:
     traces:
       receivers: [otlp]
       exporters: [awsxray, logging]
-      processors: [tail_sampling]
+      processors: [memory_limiter, filter/excludeHealthCheck, tail_sampling]
     metrics:
       receivers: [otlp]
       exporters: [prometheus, logging, awsemf]
 
   extensions: [health_check, pprof]
+
   telemetry:
     logs:
       level: debug

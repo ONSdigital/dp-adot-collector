@@ -23,7 +23,8 @@ job "dp-adot-collector" {
         to = 4317
       }
       port "prometheus" {
-        to = 8889
+        static = 8889
+        to     = 8889
       }
       port "health" {
         to = 13133
@@ -115,7 +116,8 @@ job "dp-adot-collector" {
         to = 4317
       }
       port "prometheus" {
-        to = 8889
+        static = 8889
+        to     = 8889
       }
       port "health" {
         to = 13133

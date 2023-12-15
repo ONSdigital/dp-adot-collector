@@ -1,0 +1,49 @@
+extensions:
+  health_check:
+    endpoint: "0.0.0.0:13133"
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 80
+    spike_limit_percentage: 20
+  filter/excludeHealthCheck:
+    error_mode: ignore
+    traces:
+      span:
+        - 'attributes["http.user_agent"] == "Consul Health Check"'
+        - 'attributes["user_agent.original"] == "Consul Health Check"'
+  loadbalancing:
+    protocol:
+      otlp:
+    resolver:
+      dns:
+        hostname: ${env:ADOT_SAMPLER}
+
+exporters:
+  logging:
+    loglevel: warn
+  prometheus:
+    endpoint: "0.0.0.0:8889"
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      exporters: [awsxray, logging]
+      processors: [memory_limiter, filter/excludeHealthCheck]
+    metrics:
+      receivers: [otlp]
+      exporters: [prometheus, logging ]
+
+  extensions: [health_check]
+
+  telemetry:
+    logs:
+      level: warn

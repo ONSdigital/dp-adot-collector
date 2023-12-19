@@ -24,23 +24,22 @@ processors:
       otlp:
     resolver:
       dns:
-        hostname: ${env:ADOT_SAMPLER}
+        hostname: ${env:ADOT_AGGREGATOR}
+        port: 9317
 
 exporters:
   logging:
     loglevel: warn
-  prometheus:
-    endpoint: "0.0.0.0:8889"
 
 service:
   pipelines:
     traces:
       receivers: [otlp]
-      exporters: [awsxray, logging]
+      exporters: [logging]
       processors: [memory_limiter, filter/excludeHealthCheck]
     metrics:
       receivers: [otlp]
-      exporters: [prometheus, logging ]
+      exporters: [logging]
 
   extensions: [health_check]
 

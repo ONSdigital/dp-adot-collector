@@ -20,7 +20,7 @@ job "dp-adot-collector" {
 
     network {
       port "grpc" {
-        to = 4317
+        to = 9317
       }
       port "prometheus" {
         to = 8889
@@ -31,7 +31,7 @@ job "dp-adot-collector" {
     }
 
     service {
-      name = "dp-adot-collector-grpc"
+      name = "dp-adot-collector-grpc-web"
       port = "grpc"
       tags = ["web","otel-collector"]
 
@@ -112,7 +112,7 @@ job "dp-adot-collector" {
 
     network {
       port "grpc" {
-        to = 4317
+        to = 9317
       }
       port "prometheus" {
         to = 8889
@@ -123,7 +123,7 @@ job "dp-adot-collector" {
     }
 
     service {
-      name = "dp-adot-collector-grpc"
+      name = "dp-adot-collector-grpc-publishing"
       port = "grpc"
       tags = ["publishing","otel-collector"]
 

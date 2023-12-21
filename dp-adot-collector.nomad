@@ -27,7 +27,7 @@ job "dp-adot-collector" {
         to     = 8889
       }
       port "health" {
-        to = 13133
+        to = 13134
       }
     }
 
@@ -120,7 +120,7 @@ job "dp-adot-collector" {
         to     = 8889
       }
       port "health" {
-        to = 13133
+        to = 13134
       }
     }
 

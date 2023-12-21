@@ -67,8 +67,8 @@ job "dp-adot-collector" {
       }
 
       resources {
-        cpu    = "{{WEB_RESOURCE_CPU}}"
-        memory = "{{WEB_RESOURCE_MEM}}"
+        cpu    = 50
+        memory = 128
       }
 
       template {
@@ -160,8 +160,8 @@ job "dp-adot-collector" {
       }
 
       resources {
-        cpu    = "{{PUBLISHING_RESOURCE_CPU}}"
-        memory = "{{PUBLISHING_RESOURCE_MEM}}"
+        cpu    = 50
+        memory = 128
       }
 
       template {

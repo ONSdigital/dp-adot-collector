@@ -24,7 +24,7 @@ processors:
 
 exporters:
   logging:
-    loglevel: debug
+    loglevel: warn
   awsxray:
     region: "eu-west-2"
   awsemf:
@@ -45,4 +45,4 @@ service:
   extensions: [health_check, pprof]
   telemetry:
     logs:
-      level: debug
+      level: warn

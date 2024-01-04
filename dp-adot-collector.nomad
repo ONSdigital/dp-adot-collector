@@ -3,6 +3,10 @@ job "dp-adot-collector" {
   region      = "eu"
   type        = "service"
 
+  constraint {
+    distinct_hosts = true
+  }
+
   group "web" {
     count = "{{WEB_TASK_COUNT}}"
 
@@ -20,7 +24,8 @@ job "dp-adot-collector" {
 
     network {
       port "grpc" {
-        to = 9317
+        static = 9317
+        to     = 9317
       }
       port "prometheus" {
         static = 8889
@@ -113,7 +118,8 @@ job "dp-adot-collector" {
 
     network {
       port "grpc" {
-        to = 9317
+        static = 9317
+        to     = 9317
       }
       port "prometheus" {
         static = 8889

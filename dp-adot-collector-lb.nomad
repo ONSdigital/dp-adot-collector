@@ -1,14 +1,15 @@
 job "dp-adot-collector-lb" {
   datacenters = ["eu-west-2"]
   region      = "eu"
-  type        = "system"
+  type        = "service"
   priority    = 90
 
-  meta {
-    job_type = "system"
+  constraint {
+    distinct_hosts = true
   }
 
   group "web" {
+    count = "{{WEB_TASK_COUNT}}"
 
     constraint {
       attribute = "${node.class}"
@@ -86,6 +87,7 @@ job "dp-adot-collector-lb" {
   }
 
   group "publishing" {
+    count = "{{PUBLISHING_TASK_COUNT}}"
 
     constraint {
       attribute = "${node.class}"

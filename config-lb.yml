@@ -19,6 +19,10 @@ processors:
       span:
         - 'attributes["http.user_agent"] == "Consul Health Check"'
         - 'attributes["user_agent.original"] == "Consul Health Check"'
+
+exporters:
+  logging:
+    loglevel: warn
   loadbalancing:
     protocol:
       otlp:
@@ -26,10 +30,6 @@ processors:
       dns:
         hostname: ${env:ADOT_AGGREGATOR}
         port: 9317
-
-exporters:
-  logging:
-    loglevel: warn
 
 service:
   pipelines:
@@ -39,7 +39,7 @@ service:
       processors: [memory_limiter, filter/excludeHealthCheck]
     metrics:
       receivers: [otlp]
-      exporters: [logging]
+      exporters: [logging,loadbalancing]
 
   extensions: [health_check]
 

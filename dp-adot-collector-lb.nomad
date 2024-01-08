@@ -1,17 +1,20 @@
 job "dp-adot-collector-lb" {
   datacenters = ["eu-west-2"]
   region      = "eu"
-  type        = "system"
+  type        = "service"
+  priority    = 90
 
-  meta {
-    job_type = "system"
+  constraint {
+    distinct_hosts = true
   }
 
   group "web" {
+    count = "{{WEB_TASK_COUNT}}"
 
     constraint {
       attribute = "${node.class}"
-      value     = "web"
+      operator  = "regexp"
+      value     = "web.*"
     }
 
     restart {
@@ -23,7 +26,8 @@ job "dp-adot-collector-lb" {
 
     network {
       port "grpc" {
-        to = 4317
+        static = 4317
+        to     = 4317
       }
       port "health" {
         to = 13133
@@ -44,9 +48,7 @@ job "dp-adot-collector-lb" {
       }
     }
 
-
-
-    task "dp-adot-collector-lb" {
+    task "dp-adot-collector-lb-web" {
       driver = "docker"
 
       config {
@@ -79,16 +81,18 @@ job "dp-adot-collector-lb" {
       }
 
       vault {
-        policies = ["dp-adot-collector-lb"]
+        policies = ["dp-adot-collector-lb-web"]
       }
     }
   }
 
   group "publishing" {
+    count = "{{PUBLISHING_TASK_COUNT}}"
 
     constraint {
       attribute = "${node.class}"
-      value     = "publishing"
+      operator  = "regexp"
+      value     = "publishing.*"
     }
 
     restart {
@@ -100,7 +104,8 @@ job "dp-adot-collector-lb" {
 
     network {
       port "grpc" {
-        to = 4317
+        static = 4317
+        to     = 4317
       }
       port "health" {
         to = 13133
@@ -121,7 +126,7 @@ job "dp-adot-collector-lb" {
       }
     }
 
-    task "dp-adot-collector-lb" {
+    task "dp-adot-collector-lb-publishing" {
       driver = "docker"
 
       config {
@@ -154,7 +159,7 @@ job "dp-adot-collector-lb" {
       }
 
       vault {
-        policies = ["dp-adot-collector-lb"]
+        policies = ["dp-adot-collector-lb-publishing"]
       }
     }
   }

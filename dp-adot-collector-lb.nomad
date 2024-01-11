@@ -103,7 +103,6 @@ job "dp-adot-collector-lb" {
 
     network {
       port "grpc" {
-        static = 4317
         to     = 4317
       }
       port "health" {

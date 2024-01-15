@@ -27,10 +27,11 @@ exporters:
     protocol:
       otlp:
     resolver:
-      dns:
-        hostname: ${env:ADOT_AGGREGATOR}
-        port: 9317
-
+      static:
+        hostnames:
+          {env:ADOT_AGGREGATOR_1}
+          {env:ADOT_AGGREGATOR_2}
+          {env:ADOT_AGGREGATOR_3}
 service:
   pipelines:
     traces:

@@ -29,9 +29,9 @@ exporters:
     resolver:
       static:
         hostnames:
-          {env:ADOT_AGGREGATOR_1}
-          {env:ADOT_AGGREGATOR_2}
-          {env:ADOT_AGGREGATOR_3}
+          - ${env:ADOT_AGGREGATOR_1}
+          - ${env:ADOT_AGGREGATOR_2}
+          - ${env:ADOT_AGGREGATOR_3}
 service:
   pipelines:
     traces:

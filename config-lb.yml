@@ -26,6 +26,8 @@ exporters:
   loadbalancing:
     protocol:
       otlp:
+        tls:
+          insecure: true
     resolver:
       static:
         hostnames:

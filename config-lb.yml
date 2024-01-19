@@ -39,7 +39,7 @@ service:
     traces:
       receivers: [otlp]
       exporters: [logging]
-      processors: [memory_limiter, filter/excludeHealthCheck]
+      processors: [memory_limiter, filter/excludeHealthCheck, loadbalancing]
     metrics:
       receivers: [otlp]
       exporters: [logging,loadbalancing]

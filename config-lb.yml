@@ -22,7 +22,7 @@ processors:
 
 exporters:
   logging:
-    loglevel: warn
+    loglevel: debug
   loadbalancing:
     protocol:
       otlp:

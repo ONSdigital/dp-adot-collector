@@ -38,8 +38,8 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      exporters: [logging]
-      processors: [memory_limiter, filter/excludeHealthCheck, loadbalancing]
+      exporters: [logging,loadbalancing]
+      processors: [memory_limiter, filter/excludeHealthCheck]
     metrics:
       receivers: [otlp]
       exporters: [logging,loadbalancing]

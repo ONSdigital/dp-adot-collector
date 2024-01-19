@@ -48,4 +48,4 @@ service:
 
   telemetry:
     logs:
-      level: warn
+      level: debug

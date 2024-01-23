@@ -22,7 +22,7 @@ processors:
       - name: test-policy
         type: probabilistic
         probabilistic:
-          sampling_percentage: 10
+          sampling_percentage: 100
   
 exporters:
   logging:
@@ -42,7 +42,7 @@ service:
       processors: [memory_limiter, tail_sampling]
     metrics:
       receivers: [otlp]
-      exporters: [prometheus, logging, awsemf]
+      exporters: [prometheus]
 
   extensions: [health_check]
 

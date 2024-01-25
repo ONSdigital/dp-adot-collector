@@ -39,7 +39,7 @@ service:
     traces:
       receivers: [otlp]
       exporters: [awsxray, logging]
-      processors: [memory_limiter]
+      processors: [memory_limiter, tail_sampling]
     metrics:
       receivers: [otlp]
       exporters: [prometheus]

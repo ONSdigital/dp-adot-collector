@@ -22,7 +22,7 @@ processors:
 
 exporters:
   logging:
-    loglevel: debug
+    loglevel: warn
   loadbalancing:
     protocol:
       otlp:
@@ -48,4 +48,4 @@ service:
 
   telemetry:
     logs:
-      level: debug
+      level: warn

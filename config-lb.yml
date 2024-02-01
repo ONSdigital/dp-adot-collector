@@ -40,9 +40,9 @@ service:
       receivers: [otlp]
       exporters: [logging,loadbalancing]
       processors: [memory_limiter, filter/excludeHealthCheck]
-    # metrics:
-    #   receivers: [otlp]
-    #   exporters: [logging,loadbalancing]
+    metrics:
+      receivers: [otlp]
+      exporters: [logging,loadbalancing]
 
   extensions: [health_check]
 

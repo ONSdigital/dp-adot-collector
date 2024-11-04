@@ -1,0 +1,51 @@
+extensions:
+  health_check:
+    endpoint: "0.0.0.0:13133"
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 80
+    spike_limit_percentage: 20
+  filter/excludeHealthCheck:
+    error_mode: ignore
+    traces:
+      span:
+        - 'attributes["http.user_agent"] == "Consul Health Check"'
+        - 'attributes["user_agent.original"] == "Consul Health Check"'
+
+exporters:
+  logging:
+    loglevel: warn
+  loadbalancing:
+    protocol:
+      otlp:
+        tls:
+          insecure: true
+    resolver:
+      static:
+        hostnames:
+          - ${env:ADOT_AGGREGATOR_1}
+          - ${env:ADOT_AGGREGATOR_2}
+          - ${env:ADOT_AGGREGATOR_3}
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      exporters: [logging,loadbalancing]
+      processors: [memory_limiter, filter/excludeHealthCheck]
+    metrics:
+      receivers: [otlp]
+      exporters: [logging,loadbalancing]
+
+  extensions: [health_check]
+
+  telemetry:
+    logs:
+      level: warn

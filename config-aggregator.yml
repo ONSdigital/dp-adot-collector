@@ -1,16 +1,18 @@
 extensions:
   health_check:
-    endpoint: "0.0.0.0:13133"
-  pprof:
-    endpoint: 0.0.0.0:1777
+    endpoint: "0.0.0.0:13134"
 
 receivers:
   otlp:
     protocols:
       grpc:
-        endpoint: 0.0.0.0:4317
+        endpoint: 0.0.0.0:9317
 
 processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 80
+    spike_limit_percentage: 20
   tail_sampling:
     policies:
       - name: errors-policy
@@ -21,17 +23,7 @@ processors:
         type: probabilistic
         probabilistic:
           sampling_percentage: 10
-  filter/excludeHealthCheck:
-    error_mode: ignore
-    traces:
-      span:
-        - 'attributes["http.user_agent"] == "Consul Health Check"'
-        - 'attributes["user_agent.original"] == "Consul Health Check"'
-  memory_limiter:
-    check_interval: 1s
-    limit_percentage: 80
-    spike_limit_percentage: 20
-
+  
 exporters:
   logging:
     loglevel: warn
@@ -47,12 +39,12 @@ service:
     traces:
       receivers: [otlp]
       exporters: [awsxray, logging]
-      processors: [memory_limiter, filter/excludeHealthCheck, tail_sampling]
+      processors: [memory_limiter, tail_sampling]
     metrics:
       receivers: [otlp]
-      exporters: [prometheus, logging, awsemf]
+      exporters: [prometheus]
 
-  extensions: [health_check, pprof]
+  extensions: [health_check]
 
   telemetry:
     logs:

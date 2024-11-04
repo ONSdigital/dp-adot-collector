@@ -13,5 +13,8 @@ inputs:
 outputs:
   - name: build
 
+params:
+  APPLICATION:
+
 run:
   path: dp-adot-collector/ci/scripts/build.sh
